@@ -45,6 +45,7 @@ func (ctx context) autoMove() {
 	for k, c := range ctx.conf.AutoMove {
 		if ctx.match(k) {
 			ctx.moveByIndex(c[0], c[1])
+			return
 		}
 	}
 }
