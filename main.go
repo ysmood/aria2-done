@@ -68,7 +68,7 @@ func (ctx *context) match(pattern string) bool {
 }
 
 func (ctx *context) index(pattern string) string {
-	return regexp.MustCompile(pattern).FindStringSubmatch(path.Base(ctx.filePath))[1]
+	return regexp.MustCompile(pattern).FindStringSubmatch(ctx.filePath)[1]
 }
 
 func (ctx *context) move(target string) {
