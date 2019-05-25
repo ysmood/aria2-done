@@ -1,86 +1,46 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"path"
 	"regexp"
 
 	. "github.com/ysmood/gokit"
 	yaml "gopkg.in/yaml.v2"
 )
 
-/* Yaml Example
+type Rules map[string]string
 
-mod: 0777
-
-automove:
-  name_pattern:
-    - /move/to/dir
-    - (\d\d).mp4
-
-*/
-type config struct {
-	Mod      os.FileMode
-	AutoMove map[string][]string
-}
-
-type context struct {
-	conf     config
+type Context struct {
+	rules    Rules
 	filePath string
 }
 
 func main() {
 	ctx := new()
 
-	ctx.chmod()
-	ctx.autoMove()
+	ctx.move()
 }
 
-func (ctx context) chmod() {
-	os.Chmod(ctx.filePath, ctx.conf.Mod)
-}
-
-func (ctx context) autoMove() {
-	for k, c := range ctx.conf.AutoMove {
-		if ctx.match(k) {
-			ctx.moveByIndex(c[0], c[1])
-			return
-		}
-	}
-}
-
-func new() *context {
-	var cs config
+func new() *Context {
+	var rules Rules
 
 	confData, err := ReadFile(os.Getenv("aria2_done_conf"))
 	E(err)
-	E(yaml.Unmarshal(confData, &cs))
+	E(yaml.Unmarshal(confData, &rules))
 
-	return &context{
-		conf:     cs,
+	return &Context{
+		rules:    rules,
 		filePath: os.Args[3],
 	}
 }
 
-func (ctx *context) match(pattern string) bool {
-	return regexp.MustCompile(pattern).MatchString(ctx.filePath)
-}
+func (ctx *Context) move() {
+	for pattern, tpl := range ctx.rules {
+		p := regexp.MustCompile(pattern)
+		to := p.ReplaceAllString(ctx.filePath, tpl)
 
-func (ctx *context) index(pattern string) string {
-	return regexp.MustCompile(pattern).FindStringSubmatch(ctx.filePath)[1]
-}
-
-func (ctx *context) move(target string) {
-	E(Move(ctx.filePath, target, nil))
-	Log("aria2-done mv:", ctx.filePath, "->", target)
-}
-
-func (ctx *context) moveByIndex(dir, pattern string) {
-	ctx.move(
-		path.Join(
-			dir,
-			fmt.Sprintf("%s%s", ctx.index(pattern), path.Ext(ctx.filePath)),
-		),
-	)
+		if to != ctx.filePath {
+			E(Move(ctx.filePath, to, nil))
+		}
+	}
 }

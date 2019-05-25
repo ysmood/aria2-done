@@ -1,0 +1,2 @@
+
+^test/file/(path).mp4$: $1.mp4
