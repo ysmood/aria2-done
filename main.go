@@ -6,7 +6,7 @@ import (
 	"path"
 	"regexp"
 
-	g "github.com/ysmood/gokit"
+	. "github.com/ysmood/gokit"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -53,9 +53,9 @@ func (ctx context) autoMove() {
 func new() *context {
 	var cs config
 
-	confData, err := g.ReadFile(os.Getenv("aria2_done_conf"))
-	g.E(err)
-	g.E(yaml.Unmarshal(confData, &cs))
+	confData, err := ReadFile(os.Getenv("aria2_done_conf"))
+	E(err)
+	E(yaml.Unmarshal(confData, &cs))
 
 	return &context{
 		conf:     cs,
@@ -72,8 +72,8 @@ func (ctx *context) index(pattern string) string {
 }
 
 func (ctx *context) move(target string) {
-	g.E(g.Move(ctx.filePath, target, nil))
-	g.Log("aria2-done mv:", ctx.filePath, "->", target)
+	E(Move(ctx.filePath, target, nil))
+	Log("aria2-done mv:", ctx.filePath, "->", target)
 }
 
 func (ctx *context) moveByIndex(dir, pattern string) {
