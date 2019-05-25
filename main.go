@@ -41,6 +41,7 @@ func (ctx *Context) move() {
 
 		if to != ctx.filePath {
 			E(Move(ctx.filePath, to, nil))
+			return
 		}
 	}
 }
