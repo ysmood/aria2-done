@@ -1,2 +1,4 @@
 
-^test/file/(path).mp4$: $1.mp4
+^/home/Downloading/([^/]+).*$:
+  - /home/Downloading/$1 # from
+  - /home/Downloads/$1   # to

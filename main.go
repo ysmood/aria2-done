@@ -8,7 +8,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-type Rules map[string]string
+type Rules map[string][]string
 
 type Context struct {
 	rules    Rules
@@ -37,11 +37,12 @@ func new() *Context {
 func (ctx *Context) move() {
 	for pattern, tpl := range ctx.rules {
 		p := regexp.MustCompile(pattern)
-		to := p.ReplaceAllString(ctx.filePath, tpl)
+		from := p.ReplaceAllString(ctx.filePath, tpl[0])
+		to := p.ReplaceAllString(ctx.filePath, tpl[1])
 
-		if to != ctx.filePath {
-			Log("[aria2-done] move:", ctx.filePath, "->", to)
-			E(Move(ctx.filePath, to, nil))
+		if from != to {
+			Log("[aria2-done] move:", from, "->", to)
+			E(Move(from, to, nil))
 			return
 		}
 	}
