@@ -40,6 +40,7 @@ func (ctx *Context) move() {
 		to := p.ReplaceAllString(ctx.filePath, tpl)
 
 		if to != ctx.filePath {
+			Log("[aria2-done] move:", ctx.filePath, "->", to)
 			E(Move(ctx.filePath, to, nil))
 			return
 		}
