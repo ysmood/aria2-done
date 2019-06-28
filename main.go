@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"regexp"
 
 	kit "github.com/ysmood/gokit"
@@ -23,22 +22,23 @@ func main() {
 	kit.Tasks().App(app).Add(
 		kit.Task("do", "").Init(func(cmd kit.TaskCmd) func() {
 			cmd.Default()
+			conf := cmd.Flag("conf", "yaml config file path").Required().Envar("aria2_done_conf").String()
 			cmd.Arg("gid", "").Required().String()
 			cmd.Arg("number", "the number of files").Required().String()
 			filePath := cmd.Arg("file-path", " file path").Required().String()
 
 			return func() {
-				ctx := new(*filePath)
+				ctx := new(*conf, *filePath)
 				ctx.move()
 			}
 		}),
 	).Do()
 }
 
-func new(filePath string) *Context {
+func new(confPath, filePath string) *Context {
 	var rules Rules
 
-	confData, err := kit.ReadFile(os.Getenv("aria2_done_conf"))
+	confData, err := kit.ReadFile(confPath)
 	kit.E(err)
 	kit.E(yaml.Unmarshal(confData, &rules))
 
