@@ -1,2 +1,4 @@
 /aria2-done
 conf.yml
+/dist
+/coverage.txt
