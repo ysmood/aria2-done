@@ -4,12 +4,14 @@ import (
 	"os"
 	"regexp"
 
-	. "github.com/ysmood/gokit"
+	kit "github.com/ysmood/gokit"
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Rules ...
 type Rules map[string][]string
 
+// Context ...
 type Context struct {
 	rules    Rules
 	filePath string
@@ -24,9 +26,9 @@ func main() {
 func new() *Context {
 	var rules Rules
 
-	confData, err := ReadFile(os.Getenv("aria2_done_conf"))
-	E(err)
-	E(yaml.Unmarshal(confData, &rules))
+	confData, err := kit.ReadFile(os.Getenv("aria2_done_conf"))
+	kit.E(err)
+	kit.E(yaml.Unmarshal(confData, &rules))
 
 	return &Context{
 		rules:    rules,
@@ -40,9 +42,9 @@ func (ctx *Context) move() {
 		from := p.ReplaceAllString(ctx.filePath, tpl[0])
 		to := p.ReplaceAllString(ctx.filePath, tpl[1])
 
-		if from != to {
-			Log("[aria2-done] move:", from, "->", to)
-			E(Move(from, to, nil))
+		if from != to && !kit.FileExists((to)) {
+			kit.Log("[aria2-done] move:", from, "->", to)
+			kit.E(kit.Move(from, to, nil))
 			return
 		}
 	}
