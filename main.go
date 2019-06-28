@@ -22,9 +22,10 @@ func main() {
 	app.Version("v0.0.1")
 	kit.Tasks().App(app).Add(
 		kit.Task("do", "").Init(func(cmd kit.TaskCmd) func() {
-			app.Arg("gid", "").Required().String()
-			app.Arg("number", "the number of files").Required().String()
-			filePath := app.Arg("file-path", " file path").Required().String()
+			cmd.Default()
+			cmd.Arg("gid", "").Required().String()
+			cmd.Arg("number", "the number of files").Required().String()
+			filePath := cmd.Arg("file-path", " file path").Required().String()
 
 			return func() {
 				ctx := new(*filePath)
