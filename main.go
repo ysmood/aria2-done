@@ -18,7 +18,7 @@ type Context struct {
 
 func main() {
 	app := kit.TasksNew("aria2-done", "aria2 hook handler when download is done")
-	app.Version("v0.0.2")
+	app.Version("v0.0.3")
 	kit.Tasks().App(app).Add(
 		kit.Task("do", "").Init(func(cmd kit.TaskCmd) func() {
 			cmd.Default()
@@ -59,7 +59,7 @@ func (ctx *Context) move() {
 
 		if from != to && !kit.FileExists((to)) {
 			kit.Log("[aria2-done] move:", from, "->", to)
-			// kit.E(kit.Move(from, to, nil))
+			kit.E(kit.Move(from, to, nil))
 			return
 		}
 	}
