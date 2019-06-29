@@ -18,7 +18,7 @@ type Context struct {
 
 func main() {
 	app := kit.TasksNew("aria2-done", "aria2 hook handler when download is done")
-	app.Version("v0.0.1")
+	app.Version("v0.0.2")
 	kit.Tasks().App(app).Add(
 		kit.Task("do", "").Init(func(cmd kit.TaskCmd) func() {
 			cmd.Default()
