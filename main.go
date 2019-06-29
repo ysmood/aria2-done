@@ -22,7 +22,7 @@ func main() {
 	kit.Tasks().App(app).Add(
 		kit.Task("do", "").Init(func(cmd kit.TaskCmd) func() {
 			cmd.Default()
-			conf := cmd.Flag("conf", "yaml config file path").Required().Envar("aria2_done_conf").String()
+			conf := cmd.Flag("conf", "yaml config file path").Required().Envar("aria2_done_conf").Default("aria2-done.yml").String()
 			cmd.Arg("gid", "").Required().String()
 			cmd.Arg("number", "the number of files").Required().String()
 			filePath := cmd.Arg("file-path", " file path").Required().String()
