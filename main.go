@@ -8,7 +8,7 @@ import (
 )
 
 // Rules ...
-type Rules map[string][]string
+type Rules yaml.MapSlice
 
 // Context ...
 type Context struct {
@@ -22,7 +22,7 @@ func main() {
 	kit.Tasks().App(app).Add(
 		kit.Task("do", "").Init(func(cmd kit.TaskCmd) func() {
 			cmd.Default()
-			conf := cmd.Flag("conf", "yaml config file path").Required().Envar("aria2_done_conf").Default("aria2-done.yml").String()
+			conf := cmd.Flag("conf", "yaml config file path").Envar("aria2_done_conf").Default("aria2-done.yml").String()
 			cmd.Arg("gid", "").Required().String()
 			cmd.Arg("number", "the number of files").Required().String()
 			filePath := cmd.Arg("file-path", " file path").Required().String()
@@ -49,14 +49,17 @@ func new(confPath, filePath string) *Context {
 }
 
 func (ctx *Context) move() {
-	for pattern, tpl := range ctx.rules {
+	for _, item := range ctx.rules {
+		pattern := item.Key.(string)
+		tpl := item.Value.([]interface{})
+		kit.Log(pattern)
 		p := regexp.MustCompile(pattern)
-		from := p.ReplaceAllString(ctx.filePath, tpl[0])
-		to := p.ReplaceAllString(ctx.filePath, tpl[1])
+		from := p.ReplaceAllString(ctx.filePath, tpl[0].(string))
+		to := p.ReplaceAllString(ctx.filePath, tpl[1].(string))
 
 		if from != to && !kit.FileExists((to)) {
 			kit.Log("[aria2-done] move:", from, "->", to)
-			kit.E(kit.Move(from, to, nil))
+			// kit.E(kit.Move(from, to, nil))
 			return
 		}
 	}
